@@ -1,0 +1,19 @@
+# Flutter - ملفات بناء الموبايل
+**/build/
+**/.dart_tool/
+**/.packages
+**/ios/.generated/
+**/android/app/src/main/res/generated/
+.pub-cache/
+.pub/
+
+# .NET - ملفات بناء السيرفر
+**/bin/
+**/obj/
+**/.vs/
+**/out/
+appsettings.Development.json
+
+# System - ملفات النظام
+.DS_Store
+Thumbs.db
