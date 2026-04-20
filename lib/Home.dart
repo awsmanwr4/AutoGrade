@@ -4,6 +4,7 @@ class Home extends StatefulWidget {
   final String score;
   final String feedback;
   final String studentAnswer;
+  final String modelAnswer;
 
   // بنخلي الصفحة تستقبل البيانات دي وهي بتفتح
   const Home({
@@ -11,6 +12,7 @@ class Home extends StatefulWidget {
     required this.score,
     required this.feedback,
     required this.studentAnswer,
+    required this.modelAnswer,
   });
 
   @override
@@ -34,6 +36,7 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    int finalScore = int.tryParse(widget.score) ?? 0;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -52,7 +55,7 @@ class _HomeState extends State<Home> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 50),
+                const SizedBox(height: 20),
                 const Text(
                   'STUDENT ANSWER',
                   style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),
@@ -71,10 +74,11 @@ class _HomeState extends State<Home> {
                     ),
                     const SizedBox(width: 10),
                     // الدائرة الصفراء اللي فيها الدرجة
+                    
                     Container(
                       width: 70,
                       height: 70,
-                      decoration: const BoxDecoration(color: Colors.amber, shape: BoxShape.circle),
+                      decoration:  BoxDecoration(color: finalScore >= 50 ? Colors.green : Colors.red, shape: BoxShape.circle),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -88,7 +92,33 @@ class _HomeState extends State<Home> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 80),
+                const SizedBox(height: 30),
+
+                const Text('MODEL ANSWER', 
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black54)),
+              const SizedBox(height: 10),
+              TextFormField(
+            initialValue: widget.modelAnswer,
+            maxLines: 5, // ده هيجبر الخانة إنها تظهر كبيرة بـ 5 سطور دايماً
+            readOnly: true, // عشان الطالب ميعرفش يمسح أو يعدل الإجابة النموذجية
+            style: TextStyle(fontSize: 14, color: Colors.blue.shade900, height: 1.4),
+            decoration: InputDecoration(
+            filled: true,
+             fillColor: const Color(0xFFE3F2FD), // اللون الأزرق الفاتح من الصورة
+             isDense: true,
+            // تنسيق الحدود عشان تطلع زي الصورة بالضبط
+            enabledBorder: OutlineInputBorder(
+             borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.blue.shade100),
+          ),
+           focusedBorder: OutlineInputBorder(
+           borderRadius: BorderRadius.circular(12),
+           borderSide: BorderSide(color: Colors.blue.shade100),
+    ),
+  ),
+),
+
+              const SizedBox(height: 40),
                 const Text(
                   'Feedback Summary',
                   style: TextStyle(fontSize: 20, color: Colors.black, fontWeight: FontWeight.bold),

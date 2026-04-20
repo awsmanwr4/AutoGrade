@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   final subjectController = TextEditingController();
   final questionController = TextEditingController();
   final essayController = TextEditingController();
+  final modelAnswerController = TextEditingController();
 
   String result = "";
   bool loading = false;
@@ -54,6 +55,7 @@ class _HomePageState extends State<HomePage> {
         body: jsonEncode({
           "question": questionController.text,      
           "studentAnswer": essayController.text,
+          "modelAnswer": modelAnswerController.text,
         }),
       );
 
@@ -82,9 +84,11 @@ class _HomePageState extends State<HomePage> {
             context,
             MaterialPageRoute(
               builder: (context) => Home(
+                
                 score: score,
                 feedback: feedback,
                 studentAnswer: answer,
+                modelAnswer: "The expected answer is..."
               ),
             ),
           );
@@ -118,12 +122,12 @@ class _HomePageState extends State<HomePage> {
             width: 600,
             padding: const EdgeInsets.all(20.0),
             child:Padding(
-                padding: const EdgeInsets.all(30.0),
+                padding: const EdgeInsets.all(20.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text("AutoGrade", style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.blue[900])),
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 20),
                     
                     // استخدام الـ Widgets المخصصة للـ Form
                     customField("Student Name", nameController),
@@ -132,9 +136,11 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 15),
                     customField("Question", questionController),
                     const SizedBox(height: 15),
-                    customField("Student Response", essayController, maxLines: 5),
+                    customField("Student Response", essayController, maxLines: 4),
+                    const SizedBox(height: 15),
+                    customField("Model Answer", modelAnswerController, maxLines: 4),
                     
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 20),
 
                     // عرض السكور لو موجود
                     if (result.isNotEmpty)
@@ -144,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                         child: Text(result, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.green)),
                       ),
 
-                    const SizedBox(height: 25),
+                    const SizedBox(height: 20),
 
                     // الأزرار
                     Row(
@@ -169,6 +175,7 @@ class _HomePageState extends State<HomePage> {
                             subjectController.clear();
                             questionController.clear();
                             essayController.clear();
+                            modelAnswerController.clear();
                             setState(() { result = ""; });
                           },
                           style: OutlinedButton.styleFrom(
