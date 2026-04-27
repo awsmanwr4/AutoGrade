@@ -1,4 +1,0 @@
-#Sat Apr 18 21:43:49 EET 2026
-base.0=D\:\\zsc\\myproj\\build\\app\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex
