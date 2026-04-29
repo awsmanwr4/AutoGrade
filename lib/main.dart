@@ -63,34 +63,28 @@ class _HomePageState extends State<HomePage> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print("--- Server Data: $data ---");
-        String score = data["grade"].toString(); 
-        String feedback = data["Feedback"] ?? "AI evaluated the answer.";
+        String score = data["grade"].toString();
+        String feedback = data["feedback"] ?? "AI evaluated the answer.";
         String answer = essayController.text;
-        
-        // بنعرض السكور والـ Feedback تحت بعض
-        result = "Score: $score% \n\n Feedback: $feedback"; // السطر ده هيطبع لنا السيرفر باعت إيه بالظبط
+        List<String> suggestions = (data["suggestions"] as List<dynamic>?)
+            ?.map((s) => s.toString())
+            .toList() ?? [];
+
         setState(() {
-        // غيرنا الـ s لـ S والـ f لـ F عشان الـ C# بيبعتهم كدة
-        //String score = data["grade"].toString(); 
-       // String feedback = data["Feedback"] ?? "AI evaluated the answer.";
-        
-        
-        // بنعرض السكور والـ Feedback تحت بعض
-        result = "Score: $score% \n\n Feedback: $feedback";
-        loading = false; 
-      });
-      await Future.delayed(const Duration(seconds: 8));
-      if (mounted) { // للتأكد إن المستخدم مخرجش من الصفحة أثناء الـ 5 ثواني
+          result = "Score: $score%";
+          loading = false;
+        });
+
+        if (mounted) {
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => Home(
-                
                 score: score,
                 feedback: feedback,
                 studentAnswer: answer,
-                modelAnswer: modelAnswerController.text
+                modelAnswer: modelAnswerController.text,
+                suggestions: suggestions,
               ),
             ),
           );
