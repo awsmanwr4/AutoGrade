@@ -53,7 +53,9 @@ class _HomePageState extends State<HomePage> {
         url,
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "question": questionController.text,      
+          "studentName": nameController.text,
+          "subject": subjectController.text,
+          "question": questionController.text,
           "studentAnswer": essayController.text,
           "modelAnswer": modelAnswerController.text,
         }),
@@ -88,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                 score: score,
                 feedback: feedback,
                 studentAnswer: answer,
-                modelAnswer: "The expected answer is..."
+                modelAnswer: modelAnswerController.text
               ),
             ),
           );

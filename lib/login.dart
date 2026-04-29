@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:myproj/Home.dart';
-import 'package:myproj/forget_page.dart';
 import 'dart:convert';
-
+import 'package:myproj/forget_page.dart';
 import 'package:myproj/main.dart';
 import 'package:myproj/signup_page.dart';
+import 'package:myproj/student_dashboard.dart';
+
+const String apiBase = "http://10.0.2.2:5217";
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -14,30 +16,74 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
-  
-  // متغير لتحديد الدور المختار (معلم أو طالب)
-  String selectedRole = 'Teacher';
+  String selectedRole = 'teacher';
+  bool loading = false;
+  String error = '';
+
+  Future<void> handleLogin() async {
+    if (emailController.text.isEmpty || passwordController.text.isEmpty) {
+      setState(() => error = "Please fill in all fields");
+      return;
+    }
+
+    setState(() { loading = true; error = ''; });
+
+    try {
+      final response = await http.post(
+        Uri.parse("$apiBase/api/auth/login"),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "email": emailController.text.trim(),
+          "password": passwordController.text,
+          "role": selectedRole,
+        }),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        if (selectedRole == 'teacher') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => const HomePage()),
+          );
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => StudentDashboardPage(studentName: data['name']),
+            ),
+          );
+        }
+      } else {
+        setState(() => error = data['message'] ?? 'Login failed');
+      }
+    } catch (e) {
+      setState(() => error = 'Cannot connect to server. Make sure the backend is running.');
+    } finally {
+      setState(() => loading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF8FAFF), // لون خلفية مائل للزرقة كما في الصورة
+      backgroundColor: const Color(0xFFF8FAFF),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // زر Dark Mode العلوي
               Align(
                 alignment: Alignment.topRight,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Color(0xFF0D1B3E),
+                    color: const Color(0xFF0D1B3E),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: Row(
+                  child: const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.nights_stay, color: Colors.amber, size: 16),
@@ -48,61 +94,49 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
 
-              SizedBox(height: 20),
-              
-              // العنوان
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 "AutoGrade",
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Color(0xFF0D1B3E)),
               ),
-              Text(
-                "Sign in to your account",
-                style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-              ),
+              Text("Sign in to your account", style: TextStyle(fontSize: 16, color: Colors.grey[600])),
 
-              SizedBox(height: 30),
-              Text("Choose your role", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
-              SizedBox(height: 20),
+              const SizedBox(height: 30),
+              const Text("Choose your role", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+              const SizedBox(height: 20),
 
-              // صف اختيار الأدوار (Teacher / Student)
               Row(
                 children: [
                   Expanded(
                     child: RoleCard(
                       title: "Teacher",
                       subtitle: "Access all features and manage essays",
-                      iconPath: 'assets/myimage2.png', // تأكد من إضافة الصور في pubspec.yaml
-                      isSelected: selectedRole == 'Teacher',
-                      onTap: () => setState(() => selectedRole = 'Teacher'),
+                      iconPath: 'assets/myimage2.png',
+                      isSelected: selectedRole == 'teacher',
+                      onTap: () => setState(() => selectedRole = 'teacher'),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Expanded(
                     child: RoleCard(
                       title: "Student",
                       subtitle: "Submit essay and view your results",
                       iconPath: 'assets/myimage1.png',
-
-
-                      isSelected: selectedRole == 'Student',
-                      onTap: () => setState(() => selectedRole = 'Student'),
+                      isSelected: selectedRole == 'student',
+                      onTap: () => setState(() => selectedRole = 'student'),
                     ),
                   ),
                 ],
               ),
 
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
-              // حقل البريد الإلكتروني
               CustomTextField(
                 controller: emailController,
                 hintText: "Email",
                 icon: Icons.email_outlined,
               ),
-
-              SizedBox(height: 16),
-
-              // حقل كلمة المرور
+              const SizedBox(height: 16),
               CustomTextField(
                 controller: passwordController,
                 hintText: "Password",
@@ -110,90 +144,50 @@ class _LoginPageState extends State<LoginPage> {
                 isPassword: true,
               ),
 
-              // زر نسيت كلمة المرور
+              if (error.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(error, style: const TextStyle(color: Colors.red, fontSize: 13)),
+                ),
+
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                  context,
-                 MaterialPageRoute(builder: (context) =>  ForgotPasswordPage()),
-      );
-                  },
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => ForgotPasswordPage()),
+                  ),
                   child: Text("Forgot password?", style: TextStyle(color: Colors.blue[700])),
                 ),
               ),
 
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-              // زر تسجيل الدخول
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFF1E63EB),
+                    backgroundColor: const Color(0xFF1E63EB),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                   ),
-                  onPressed: () {
-                    if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-                      // Navigator...
-                      // 1. الشرط بتاعك الجميل
-  if (emailController.text.isNotEmpty && passwordController.text.isNotEmpty) {
-    if (selectedRole == 'Teacher') {
-      // لو مدرس يروح صفحة الـ HomePage
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
-    } else if (selectedRole == 'Student') {
-      // لو طالب يروح صفحة الفيدباك (تأكد من اسم الكلاس عندك)
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const Home(score: "60", // البيانات المطلوبة
-      feedback: "No feedback yet",
-      studentAnswer: "",
-      modelAnswer: "",)), 
-      );
-    }else {
-      // لو ضغط Login من غير ما يختار لا مدرس ولا طالب
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please select your role first!")),
-      );
-    }
-    
-    
-   
-    
-  } 
-  else {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text("Please fill in all fields!"),
-        backgroundColor: Colors.red, // لون أحمر للتنبيه
-      ),
-    );
-  }
-                    }
-                  },
-                  child: Text("Login", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
+                  onPressed: loading ? null : handleLogin,
+                  child: loading
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text("Login", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
                 ),
               ),
 
-              SizedBox(height: 20),
-              
-              // خيار التسجيل الجديد
+              const SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("Don't have an account? "),
+                  const Text("Don't have an account? "),
                   GestureDetector(
-                    onTap: () {
-                     Navigator.push(
-                 context,
-                  MaterialPageRoute(builder: (context) =>  SignupPage()),
-                ); 
-                    },
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => SignupPage()),
+                    ),
                     child: Text("Sign up", style: TextStyle(color: Colors.blue[700], fontWeight: FontWeight.bold)),
                   ),
                 ],
@@ -206,20 +200,25 @@ class _LoginPageState extends State<LoginPage> {
   }
 }
 
-// --- ويدجت مخصصة لاختيار الدور ---
 class RoleCard extends StatelessWidget {
   final String title, subtitle, iconPath;
   final bool isSelected;
   final VoidCallback onTap;
 
-  RoleCard({required this.title, required this.subtitle, required this.iconPath, required this.isSelected, required this.onTap});
+  const RoleCard({
+    required this.title,
+    required this.subtitle,
+    required this.iconPath,
+    required this.isSelected,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
@@ -227,22 +226,15 @@ class RoleCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            // استبدل Icon بـ Image.asset إذا كان لديك صور جاهزة
-           // Icon(title == "Teacher" ? Icons.school : Icons.person, size: 50, color: Colors.blue),
-           Image.asset(
-            iconPath, 
-            height: 60, 
-            fit: BoxFit.contain,
-             errorBuilder: (context, error, stackTrace) {
-           // لو المسار فيه غلطة، السهم الأحمر ده هيعرفك
-             return Icon(Icons.warning, color: Colors.red, size: 50);
-          },
-         ),
-
-            SizedBox(height: 8),
-
-            Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            SizedBox(height: 4),
+            Image.asset(
+              iconPath,
+              height: 60,
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) => const Icon(Icons.warning, color: Colors.red, size: 50),
+            ),
+            const SizedBox(height: 8),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+            const SizedBox(height: 4),
             Text(subtitle, textAlign: TextAlign.center, style: TextStyle(fontSize: 11, color: Colors.grey[600])),
           ],
         ),
@@ -251,14 +243,18 @@ class RoleCard extends StatelessWidget {
   }
 }
 
-// --- ويدجت مخصصة للحقول ---
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final IconData icon;
   final bool isPassword;
 
-  CustomTextField({required this.controller, required this.hintText, required this.icon, this.isPassword = false});
+  const CustomTextField({
+    required this.controller,
+    required this.hintText,
+    required this.icon,
+    this.isPassword = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +263,7 @@ class CustomTextField extends StatelessWidget {
       obscureText: isPassword,
       decoration: InputDecoration(
         prefixIcon: Icon(icon, color: Colors.grey),
-        suffixIcon: isPassword ? Icon(Icons.visibility_outlined, color: Colors.grey) : null,
+        suffixIcon: isPassword ? const Icon(Icons.visibility_outlined, color: Colors.grey) : null,
         hintText: hintText,
         filled: true,
         fillColor: Colors.white,
