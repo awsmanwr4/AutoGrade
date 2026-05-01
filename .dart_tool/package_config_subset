@@ -110,6 +110,10 @@ web
 3.4
 file:///C:/Users/NV_User/AppData/Local/Pub/Cache/hosted/pub.dev/web-1.1.1/
 file:///C:/Users/NV_User/AppData/Local/Pub/Cache/hosted/pub.dev/web-1.1.1/lib/
+myproj
+3.6
+file:///C:/Users/NV_User/Downloads/AutoGrade-Flutter/
+file:///C:/Users/NV_User/Downloads/AutoGrade-Flutter/lib/
 sky_engine
 3.2
 file:///C:/flutter2/flutter/bin/cache/pkg/sky_engine/
@@ -122,8 +126,4 @@ flutter_test
 3.3
 file:///C:/flutter2/flutter/packages/flutter_test/
 file:///C:/flutter2/flutter/packages/flutter_test/lib/
-myproj
-3.6
-file:///D:/zsc/myproj/
-file:///D:/zsc/myproj/lib/
 2
