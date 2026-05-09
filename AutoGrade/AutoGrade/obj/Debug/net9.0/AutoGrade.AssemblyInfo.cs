@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AutoGrade")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aec8eef8d3855dfa739b434a0d682d611d99077b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b5c21b78cc446cedd34a6cd3de47c2ac806a72d2")]
 [assembly: System.Reflection.AssemblyProductAttribute("AutoGrade")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AutoGrade")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
