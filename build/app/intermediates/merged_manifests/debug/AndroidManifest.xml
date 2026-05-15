@@ -28,6 +28,16 @@
         </intent>
     </queries>
 
+<<<<<<< HEAD
+=======
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+>>>>>>> ec7f4ed (update dashboard and feedback)
     <permission
         android:name="com.example.myproj.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
         android:protectionLevel="signature" />
@@ -75,6 +85,19 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
+<<<<<<< HEAD
+=======
+        <provider
+            android:name="com.crazecoder.openfile.FileProvider"
+            android:authorities="com.example.myproj.fileProvider.com.crazecoder.openfile"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
+
+>>>>>>> ec7f4ed (update dashboard and feedback)
         <uses-library
             android:name="androidx.window.extensions"
             android:required="false" />
@@ -87,6 +110,12 @@
             android:authorities="com.example.myproj.androidx-startup"
             android:exported="false" >
             <meta-data
+<<<<<<< HEAD
+=======
+                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+                android:value="androidx.startup" />
+            <meta-data
+>>>>>>> ec7f4ed (update dashboard and feedback)
                 android:name="androidx.lifecycle.ProcessLifecycleInitializer"
                 android:value="androidx.startup" />
             <meta-data

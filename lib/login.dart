@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:myproj/forget_page.dart';
-import 'package:myproj/main.dart';
 import 'package:myproj/signup_page.dart';
 import 'package:myproj/student_dashboard.dart';
+import 'package:myproj/teacher_dashboard.dart';
 
 const String apiBase = "http://10.0.2.2:5217";
 
@@ -45,13 +45,18 @@ class _LoginPageState extends State<LoginPage> {
         if (selectedRole == 'teacher') {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => const HomePage()),
+            MaterialPageRoute(
+              builder: (_) => TeacherDashboardPage(teacherName: data['name'] ?? ''),
+            ),
           );
         } else {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => StudentDashboardPage(studentName: data['name']),
+              builder: (_) => StudentDashboardPage(
+                studentName: data['name'] ?? '',
+                studentGrade: data['grade'] ?? '',
+              ),
             ),
           );
         }
